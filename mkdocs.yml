@@ -1,0 +1,58 @@
+site_name: Skyzer ERP Docs
+repo_name: skyzer
+repo_url: https://github.com/skyzer-research/erp
+edit_uri: https://github.com/skyzer-research/erp/tree/main/docs
+theme:
+  name: material
+  icon:
+    edit: material/pencil
+    view: material/eye
+    repo: fontawesome/brands/github
+  features:
+    - content.action.edit
+    - content.code.copy
+    - content.code.annotate
+    - navigation.instant
+    - navigation.path
+    - navigation.progress
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.top
+    - search
+    - search.highlight
+    - search.suggest
+    - toc.follow
+  language: en
+plugins:
+  - search
+  # - git-revision-date
+  # - git-revision-date-localized:
+  #     enable_creation_date: true
+  #     fallback_to_build_date: true
+markdown_extensions:
+  - admonition
+  - footnotes
+  - pymdownx.critic
+  - pymdownx.caret
+  - pymdownx.highlight
+  - pymdownx.inlinehilite
+  - pymdownx.keys
+  - pymdownx.mark
+  - pymdownx.snippets
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          securityLevel: loose
+          logLevel: 1
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tilde
+
+docs_dir: docs/
+nav:
+  - Home: index.md
+  - Setup:
+    - setup/documentation.md
+    - setup/development.md
+    - setup/deployment.md
+  - Security: security/index.md

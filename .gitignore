@@ -1,0 +1,9 @@
+node_modules
+
+/.cache
+/build
+.env
+
+postgres-data/*
+stdout.log
+stderr.log

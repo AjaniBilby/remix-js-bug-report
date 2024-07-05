@@ -1,0 +1,50 @@
+name: Continuous Intergration
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+concurrency:
+  group: ${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Use Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '20.x' # replace with your Node.js version
+
+      - name: Install Dependencies
+        run: npm ci
+      - name: Typecheck
+        run: npm run validate:typecheck
+      - name: Lint Rule Check
+        run: npm run validate:lint
+      - name: Build Check
+        run: npm run build
+  merge-to-production:
+    needs: validate
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          ref: production
+
+      - name: Fetch all branches
+        run: git fetch --all
+
+      - name: Merge main into production
+        run: git merge origin/main  # the source branch to merge changes from
+
+      - name: Push changes
+        run: git push origin production  # push changes back to the remote branch

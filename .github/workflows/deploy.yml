@@ -1,0 +1,41 @@
+name: Deploy Digital Ocean
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 16 * * *' # Runs every day at 4 PM UTC (2 AM next day AEST)
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Check for changes in the past 26 hours
+        id: changes
+        run: |
+          timestamp=$(date -d "26 hours ago" +%s)
+          branch="origin/production"
+
+          if git rev-list --since=$timestamp $branch | grep -q .; then
+            echo "changed=true" >> $GITHUB_STATE
+            echo "changes detected"
+          else
+            echo "changed=false" >> $GITHUB_STATE
+            echo "no changes detected"
+            exit 0
+          fi
+
+      - name: Deploy NodeJS app
+        uses: appleboy/ssh-action@v0.1.2
+        with:
+          host: ${{secrets.SSH_HOST}}
+          username: ${{secrets.SSH_USERNAME}}
+          key: ${{secrets.SSH_KEY}}
+
+          script: |
+            cd /srv/skyzer-erp
+            bash ./upgrade.bash
